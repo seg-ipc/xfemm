@@ -682,7 +682,7 @@ static int str_format (lua_State *L)
             case 'f':
             case 'g':
             case 'G':
-                sprintf(buff, form, luaL_check_number(L, arg));
+                sprintf(buff, form, Re(luaL_check_number(L, arg)));
                 break;
             case 'q':
                 luaI_addquoted(L, &b, arg);
