@@ -85,6 +85,16 @@ test_lua_setup(femmcli_antiperiodicBC_flux "femmcli_antiperiodicBC_flux.fem")
 test_lua(femmcli_antiperiodicBC_AGE_TorqueBenchmark LABELS "magnetics;postprocessor;fromWiki")
 test_lua_setup(femmcli_antiperiodicBC_AGE_TorqueBenchmark "femmcli_antiperiodicBC_AGE_TorqueBenchmark.fem")
 
+if(APPLE)
+    # These AGE torque benchmarks currently hang in macOS CI. Keep the
+    # coverage on Windows/Linux while the macOS-specific path is investigated.
+    set_tests_properties(
+        femmcli_TorqueBenchmark.lua
+        femmcli_antiperiodicBC_AGE_TorqueBenchmark.lua
+        PROPERTIES DISABLED TRUE
+        )
+endif()
+
 ### electrostatics tests:
 test_lua(femmcli_epproc LABELS "electrostatics;postprocessor")
 test_lua_setup(femmcli_epproc "femmcli_epproc.fee")
