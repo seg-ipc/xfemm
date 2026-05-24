@@ -1389,6 +1389,7 @@ REAL area;                                      /* The area of the triangle. */
 #endif /* not ANSI_DECLARATORS */
 
 {
+  (void)area;
   REAL dxoa, dxda, dxod;
   REAL dyoa, dyda, dyod;
   REAL oalen, dalen, odlen;
@@ -3294,7 +3295,7 @@ void info()
 /*                                                                           */
 /*****************************************************************************/
 
-void internalerror()
+void internalerror(void)
 {
   TriMessage("  Please report this bug to jrs@cs.berkeley.edu\n");
   TriMessage("  Include the message above, your input data set, and the exact\n");
@@ -3797,6 +3798,7 @@ struct osub *s;
 #endif /* not ANSI_DECLARATORS */
 
 {
+  (void)b;
   struct osub printsh;
   struct otri printtri;
   vertex printvertex;
@@ -3978,7 +3980,7 @@ int alignment;
   /*   - The parameter `alignment'.                                   */
   /*   - sizeof(VOID *), so the stack of dead items can be maintained */
   /*       without unaligned accesses.                                */
-  if (alignment > sizeof(VOID *)) {
+  if ((size_t)alignment > sizeof(VOID *)) {
     pool->alignbytes = alignment;
   } else {
     pool->alignbytes = sizeof(VOID *);
@@ -4378,7 +4380,7 @@ struct behavior *b;
   /*   integer index can occupy the same space as the subsegment pointers  */
   /*   or attributes or area constraint or extra nodes.                    */
   if ((b->voronoi || b->neighbors) &&
-      (trisize < 6 * sizeof(triangle) + sizeof(int))) {
+      ((size_t)trisize < 6 * sizeof(triangle) + sizeof(int))) {
     trisize = 6 * sizeof(triangle) + sizeof(int);
   }
 
@@ -4917,7 +4919,7 @@ struct osub *newsubseg;
 /*                                                                           */
 /*****************************************************************************/
 
-void exactinit()
+void exactinit(void)
 {
   REAL half;
   REAL check, lastcheck;
@@ -13244,7 +13246,7 @@ struct behavior *b;
 
 #ifndef CDT_ONLY
 
-void precisionerror()
+void precisionerror(void)
 {
   TriMessage("Try increasing the area criterion and/or reducing the minimum\n");
   TriMessage("  allowable angle so that tiny triangles are not created.\n");

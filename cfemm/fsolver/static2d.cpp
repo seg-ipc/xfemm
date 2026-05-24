@@ -991,7 +991,7 @@ int FSolver::Static2D(CBigLinProb &L)
 
             // report some results
             char outstr[256];
-            sprintf(outstr,"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
+            snprintf(outstr, sizeof(outstr),"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
             PrintMessage(outstr);
 //        TheView->SetDlgItemText(IDC_FRAME2,outstr);
             j = (int)  (100.*log10(res)/(log10(Precision)+2.));
@@ -1047,23 +1047,23 @@ int FSolver::WriteStatic2D(CBigLinProb &L)
     double unitconv[]= {2.54,0.1,1.,100.,0.00254,1.e-04};
 
     // first, echo input .fem file to the .ans file;
-    sprintf(c,"%s.fem",PathName.c_str());
+    snprintf(c, sizeof(c),"%s.fem",PathName.c_str());
     fz = fopen(c,"rt");
     if(fz==NULL)
     {
         //MsgBox("Couldn't open %s.fem\n", PathName.c_str());
-        sprintf(msgbuff,"Couldn't open %s.fem\n", PathName.c_str());
+        snprintf(msgbuff, sizeof(msgbuff),"Couldn't open %s.fem\n", PathName.c_str());
         WarnMessage(msgbuff);
         return false;
     }
 
-    sprintf(c,"%s.ans",PathName.c_str());
+    snprintf(c, sizeof(c),"%s.ans",PathName.c_str());
     fp = fopen(c,"wt");
     if(fp==NULL)
     {
         if (fz != NULL) fclose(fz);
         //MsgBox("Couldn't write to %s.ans\n",PathName.c_str());
-        sprintf(msgbuff,"Couldn't write to %s.ans\n",PathName.c_str());
+        snprintf(msgbuff, sizeof(msgbuff),"Couldn't write to %s.ans\n",PathName.c_str());
         WarnMessage(msgbuff);
         return false;
     }

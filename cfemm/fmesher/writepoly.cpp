@@ -1088,7 +1088,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
             char kludge[32];
             double newMaxSideLength;
             newMaxSideLength = problem->arclist[i]->ArcLength/((double) problem->arclist[i]->cnt);
-            sprintf(kludge,"%.1e",newMaxSideLength);
+            snprintf(kludge, sizeof(kludge),"%.1e",newMaxSideLength);
             sscanf(kludge,"%lf",&newMaxSideLength);
 
             problem->arclist[i]->MaxSideLength = newMaxSideLength;
@@ -1223,7 +1223,7 @@ int FMesher::DoPeriodicBCTriangulation(string PathName)
 			// based on the inner and outer radii;
 			altMaxSideLength=(360./PI)*(agelst[i]->ro-agelst[i]->ri)/(agelst[i]->ro+agelst[i]->ri);
 			if (altMaxSideLength<myMaxSideLength) myMaxSideLength=altMaxSideLength;
-			sprintf(kludge,"%.1e",myMaxSideLength);
+			snprintf(kludge, sizeof(kludge),"%.1e",myMaxSideLength);
 			sscanf(kludge,"%lf",&myMaxSideLength);
 
 			// apply new side length to all arcs in this AGE
@@ -2284,7 +2284,7 @@ int TriangulateHelper::triangulate(bool verbose)
     // this is a mess, but building the string with std::string is more flexible than sprintf
     // (and the triangulate api is ancient)
     char cmdline[512];
-    sprintf(cmdline, "%s",triArgs.c_str());
+    snprintf(cmdline, sizeof(cmdline), "%s",triArgs.c_str());
 
 #ifdef XFEMM_BUILTIN_TRIANGLE
     int tristatus = ::triangulate(cmdline, &in, &out, (struct triangulateio *) nullptr, this->TriMessage);
