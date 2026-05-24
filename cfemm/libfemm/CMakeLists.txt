@@ -32,6 +32,14 @@ add_library(luacomplex
     liblua/lzio.cpp
     )
 target_include_directories(luacomplex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/liblua> $<INSTALL_INTERFACE:include/liblua>)
+# Suppress warnings in vendored Lua source that we do not own.
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
+    target_compile_options(luacomplex PRIVATE
+        -Wno-deprecated-declarations      # sprintf/vsprintf/tmpnam marked deprecated on Apple SDK
+        -Wno-non-c-typedef-for-linkage    # anonymous class typedef in lobject.h / llex.h
+        -Wno-unused-const-variable        # lua_ident version-marker string in lapi.cpp
+    )
+endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/femmversion.h.in"

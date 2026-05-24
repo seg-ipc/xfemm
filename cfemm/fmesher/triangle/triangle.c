@@ -1389,6 +1389,7 @@ REAL area;                                      /* The area of the triangle. */
 #endif /* not ANSI_DECLARATORS */
 
 {
+  (void)area;
   REAL dxoa, dxda, dxod;
   REAL dyoa, dyda, dyod;
   REAL oalen, dalen, odlen;
@@ -3294,7 +3295,7 @@ void info()
 /*                                                                           */
 /*****************************************************************************/
 
-void internalerror()
+void internalerror(void)
 {
   TriMessage("  Please report this bug to jrs@cs.berkeley.edu\n");
   TriMessage("  Include the message above, your input data set, and the exact\n");
@@ -3797,6 +3798,7 @@ struct osub *s;
 #endif /* not ANSI_DECLARATORS */
 
 {
+  (void)b;
   struct osub printsh;
   struct otri printtri;
   vertex printvertex;
@@ -3978,7 +3980,7 @@ int alignment;
   /*   - The parameter `alignment'.                                   */
   /*   - sizeof(VOID *), so the stack of dead items can be maintained */
   /*       without unaligned accesses.                                */
-  if (alignment > sizeof(VOID *)) {
+  if ((size_t)alignment > sizeof(VOID *)) {
     pool->alignbytes = alignment;
   } else {
     pool->alignbytes = sizeof(VOID *);
@@ -4378,7 +4380,7 @@ struct behavior *b;
   /*   integer index can occupy the same space as the subsegment pointers  */
   /*   or attributes or area constraint or extra nodes.                    */
   if ((b->voronoi || b->neighbors) &&
-      (trisize < 6 * sizeof(triangle) + sizeof(int))) {
+      ((size_t)trisize < 6 * sizeof(triangle) + sizeof(int))) {
     trisize = 6 * sizeof(triangle) + sizeof(int);
   }
 
@@ -4917,7 +4919,7 @@ struct osub *newsubseg;
 /*                                                                           */
 /*****************************************************************************/
 
-void exactinit()
+void exactinit(void)
 {
   REAL half;
   REAL check, lastcheck;
@@ -11324,7 +11326,9 @@ FILE *polyfile;
   /*   together those that share an edge.            */
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
+#ifndef TRILIBRARY
   elementnumber = b->firstnumber;
+#endif /* not TRILIBRARY */
   while (triangleloop.tri != (triangle *) NULL) {
 #ifdef TRILIBRARY
     /* Copy the triangle's three corners. */
@@ -11745,7 +11749,6 @@ vertex endpoint2;
   vertex leftvertex, rightvertex;
   vertex newvertex;
   enum insertvertexresult success;
-  enum finddirectionresult collinear;
   REAL ex, ey;
   REAL tx, ty;
   REAL etx, ety;
@@ -11814,7 +11817,7 @@ vertex endpoint2;
 
   /* Inserting the vertex may have caused edge flips.  We wish to rediscover */
   /*   the edge connecting endpoint1 to the new intersection vertex.         */
-  collinear = finddirection(m, b, splittri, endpoint1);
+  (void)finddirection(m, b, splittri, endpoint1);
   dest(*splittri, rightvertex);
   apex(*splittri, leftvertex);
   if ((leftvertex[0] == endpoint1[0]) && (leftvertex[1] == endpoint1[1])) {
@@ -11865,10 +11868,10 @@ int newmark;
 #endif /* not ANSI_DECLARATORS */
 
 {
+  enum finddirectionresult collinear;
   struct otri crosstri;
   struct osub crosssubseg;
   vertex leftvertex, rightvertex;
-  enum finddirectionresult collinear;
   subseg sptr;                      /* Temporary variable used by tspivot(). */
 
   collinear = finddirection(m, b, searchtri, endpoint2);
@@ -13222,14 +13225,13 @@ struct behavior *b;
 
 {
   struct osub subsegloop;
-  int dummy;
 
   traversalinit(&m->subsegs);
   subsegloop.ssorient = 0;
   subsegloop.ss = subsegtraverse(m);
   while (subsegloop.ss != (subseg *) NULL) {
     /* If the segment is encroached, add it to the list. */
-    dummy = checkseg4encroach(m, b, &subsegloop);
+    (void)checkseg4encroach(m, b, &subsegloop);
     subsegloop.ss = subsegtraverse(m);
   }
 }
@@ -13244,7 +13246,7 @@ struct behavior *b;
 
 #ifndef CDT_ONLY
 
-void precisionerror()
+void precisionerror(void)
 {
   TriMessage("Try increasing the area criterion and/or reducing the minimum\n");
   TriMessage("  allowable angle so that tiny triangles are not created.\n");
@@ -13295,7 +13297,6 @@ int triflaws;
   REAL split;
   REAL multiplier, divisor;
   int acuteorg, acuteorg2, acutedest, acutedest2;
-  int dummy;
   int i;
   triangle ptr;                     /* Temporary variable used by stpivot(). */
   subseg sptr;                        /* Temporary variable used by snext(). */
@@ -13464,9 +13465,9 @@ int triflaws;
           m->steinerleft--;
         }
         /* Check the two new subsegments to see if they're encroached. */
-        dummy = checkseg4encroach(m, b, &currentenc);
+        (void)checkseg4encroach(m, b, &currentenc);
         snextself(currentenc);
-        dummy = checkseg4encroach(m, b, &currentenc);
+        (void)checkseg4encroach(m, b, &currentenc);
       }
 
       badsubsegdealloc(m, encloop);
@@ -14567,11 +14568,11 @@ char **argv;
   int attribindex;
 #else /* not TRILIBRARY */
   FILE *outfile;
+  long elementnumber;
 #endif /* not TRILIBRARY */
   struct otri triangleloop;
   vertex p1, p2, p3;
   vertex mid1, mid2, mid3;
-  long elementnumber;
   int i;
 
 #ifdef TRILIBRARY
@@ -14611,7 +14612,9 @@ char **argv;
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
   triangleloop.orient = 0;
+#ifndef TRILIBRARY
   elementnumber = b->firstnumber;
+#endif /* not TRILIBRARY */
   while (triangleloop.tri != (triangle *) NULL) {
     org(triangleloop, p1);
     dest(triangleloop, p2);
@@ -14657,7 +14660,9 @@ char **argv;
 #endif /* not TRILIBRARY */
 
     triangleloop.tri = triangletraverse(m);
+#ifndef TRILIBRARY
     elementnumber++;
+#endif /* not TRILIBRARY */
   }
 
 #ifndef TRILIBRARY
@@ -15022,7 +15027,10 @@ char **argv;
   vertex torg, tdest, tapex;
   REAL circumcenter[2];
   REAL xi, eta;
-  long vnodenumber, vedgenumber;
+  long vnodenumber;
+#ifndef TRILIBRARY
+  long vedgenumber;
+#endif /* not TRILIBRARY */
   int p1, p2;
   int i;
   triangle ptr;                         /* Temporary variable used by sym(). */
@@ -15130,7 +15138,9 @@ char **argv;
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
+#ifndef TRILIBRARY
   vedgenumber = b->firstnumber;
+#endif /* not TRILIBRARY */
   /* To loop over the set of edges, loop over all triangles, and look at   */
   /*   the three edges of each triangle.  If there isn't another triangle  */
   /*   adjacent to the edge, operate on the edge.  If there is another     */
@@ -15173,7 +15183,9 @@ char **argv;
           fprintf(outfile, "%4ld   %d  %d\n", vedgenumber, p1, p2);
 #endif /* not TRILIBRARY */
         }
+#ifndef TRILIBRARY
         vedgenumber++;
+#endif /* not TRILIBRARY */
       }
     }
     triangleloop.tri = triangletraverse(m);
@@ -15282,7 +15294,9 @@ char **argv;
 #endif /* not TRILIBRARY */
 
     triangleloop.tri = triangletraverse(m);
+#ifndef TRILIBRARY
     elementnumber++;
+#endif /* not TRILIBRARY */
   }
 
 #ifndef TRILIBRARY

@@ -359,7 +359,7 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
     }
 
     //read meshnodes;
-    sprintf(infile,"%s.node",PathName.c_str());
+    snprintf(infile, sizeof(infile),"%s.node",PathName.c_str());
     if((fp=fopen(infile,"rt"))==NULL)
     {
         return BADNODEFILE;
@@ -391,7 +391,7 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
     fclose(fp);
 
     //read in periodic boundary conditions;
-    sprintf(infile,"%s.pbc",PathName.c_str());
+    snprintf(infile, sizeof(infile),"%s.pbc",PathName.c_str());
     if((fp=fopen(infile,"rt"))==NULL)
     {
         return BADPBCFILE;
@@ -516,7 +516,7 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
     fclose(fp);
 
     // read in elements;
-    sprintf(infile,"%s.ele",PathName.c_str());
+    snprintf(infile, sizeof(infile),"%s.ele",PathName.c_str());
 #ifdef DEBUG
     {
         char buf[1028]; SNPRINTF(buf, sizeof(buf), "Reading in elements from %s\n", infile);
@@ -570,15 +570,15 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
             fclose(fp);
             if (deleteFiles)
             {
-                sprintf(infile,"%s.ele",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.ele",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.node",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.node",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.pbc",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.pbc",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.poly",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.poly",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.edge",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.edge",PathName.c_str());
                 remove(infile);
             }
             return MISSINGMATPROPS;
@@ -592,15 +592,15 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
             fclose(fp);
             if (deleteFiles)
             {
-                sprintf(infile,"%s.ele",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.ele",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.node",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.node",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.pbc",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.pbc",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.poly",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.poly",PathName.c_str());
                 remove(infile);
-                sprintf(infile,"%s.edge",PathName.c_str());
+                snprintf(infile, sizeof(infile),"%s.edge",PathName.c_str());
                 remove(infile);
             }
             return ELMLABELTOOBIG;
@@ -655,7 +655,7 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
             nmbr[k]++;
         }
 
-    sprintf(infile,"%s.edge",PathName.c_str());
+    snprintf(infile, sizeof(infile),"%s.edge",PathName.c_str());
     if((fp=fopen(infile,"rt"))==NULL)
     {
         return BADEDGEFILE;
@@ -703,13 +703,13 @@ LoadMeshErr FSolver::LoadMesh(bool deleteFiles)
     if (deleteFiles)
     {
         // clear out temporary files
-        sprintf(infile,"%s.ele",PathName.c_str());
+        snprintf(infile, sizeof(infile),"%s.ele",PathName.c_str());
         remove(infile);
-        sprintf(infile,"%s.node",PathName.c_str());
+        snprintf(infile, sizeof(infile),"%s.node",PathName.c_str());
         remove(infile);
-        sprintf(infile,"%s.pbc",PathName.c_str());
+        snprintf(infile, sizeof(infile),"%s.pbc",PathName.c_str());
         remove(infile);
-        sprintf(infile,"%s.poly",PathName.c_str());
+        snprintf(infile, sizeof(infile),"%s.poly",PathName.c_str());
         remove(infile);
     }
 

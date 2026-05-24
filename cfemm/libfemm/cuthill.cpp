@@ -103,7 +103,7 @@ int FEASolver<PointPropT,BoundaryPropT,BlockPropT,CircuitPropT,BlockLabelT,MeshE
     char infile[256];
 
     // read in connectivity from nodefile
-    sprintf(infile,"%s.edge",PathName.c_str());
+    snprintf(infile, sizeof(infile),"%s.edge",PathName.c_str());
     if((fp=fopen(infile,"rt"))==NULL)
     {
         //MsgBox("Couldn't open %s",infile);

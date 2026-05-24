@@ -1420,14 +1420,12 @@ bool FPProc::OpenDocument(string pathname)
 	for (i=0;i<(int)agelist.size();i++)
 	{
 		int m;
-		double tta,R,dr,ri,ro,n,dt;
+		double tta,R,dr,n,dt;
 		CComplex brc,brs,btc,bts;
 		double brcPrev,brsPrev,btcPrev,btsPrev;
 
 		R=(agelist[i].ri + agelist[i].ro)/2.;
 		dr=(agelist[i].ro - agelist[i].ri);
-		ri=agelist[i].ri/R;
-		ro=agelist[i].ro/R;
 		dt=(PI/180.)*agelist[i].totalArcLength/((double) agelist[i].totalArcElements);
 
 		if (agelist[i].BdryFormat==0)
@@ -1918,7 +1916,6 @@ bool FPProc::OpenDocument(string pathname)
         double H_Low;
         double Hr_Low, Hr_High;
         double Hi_Low, Hi_High;
-        double logB_Low, logB_High;
         double a0,a1;
         CComplex h1,h2;
 
@@ -4067,7 +4064,7 @@ CComplex FPProc::BlockIntegral(const int inttype)
 CComplex temp;
             // integrals that need to be evaluated over all elements,
             // regardless of which elements are actually selected.
-            if((inttype>=18) || (inttype<=23))
+            if((inttype>=18) && (inttype<=23))
             {
                 a=ElmArea(i)*std::pow(LengthConv[LengthUnits],2.);
                 if(problemType==AXISYMMETRIC)

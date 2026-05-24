@@ -854,9 +854,9 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
             // report some results
             char outstr[256];
 // #ifdef NEWTON
-            if (ACSolver==1) sprintf(outstr,"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
+            if (ACSolver==1) snprintf(outstr, sizeof(outstr),"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
 // #else
-            else sprintf(outstr,"Successive Approx(%i) Relax=%.4g",Iter,Relax);
+            else snprintf(outstr, sizeof(outstr),"Successive Approx(%i) Relax=%.4g",Iter,Relax);
 // #endif
             printf("%s\n", outstr);
         }
@@ -899,7 +899,7 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
     double unitconv[]= {2.54,0.1,1.,100.,0.00254,1.e-04};
 
     // first, echo input .fem file to the .ans file;
-    sprintf(c,"%s.fem",PathName.c_str());
+    snprintf(c, sizeof(c),"%s.fem",PathName.c_str());
     fz = fopen(c,"rt");
     if(fz==NULL)
     {
@@ -908,7 +908,7 @@ int FSolver::WriteHarmonic2D(CBigComplexLinProb &L)
         return false;
     }
 
-    sprintf(c,"%s.ans",PathName.c_str());
+    snprintf(c, sizeof(c),"%s.ans",PathName.c_str());
     fp = fopen(c,"wt");
     if(fp==NULL)
     {

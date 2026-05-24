@@ -778,9 +778,9 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
             // report some results
             char outstr[256];
 //#ifdef NEWTON
-            if(ACSolver==1) sprintf(outstr,"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
+            if(ACSolver==1) snprintf(outstr, sizeof(outstr),"Newton Iteration(%i) Relax=%.4g\n",Iter,Relax);
 //#else
-            else sprintf(outstr,"Successive Approx(%i) Relax=%.4g\n",Iter,Relax);
+            else snprintf(outstr, sizeof(outstr),"Successive Approx(%i) Relax=%.4g\n",Iter,Relax);
 //#endif
 //        TheView->SetDlgItemText(IDC_FRAME2,outstr);
             if(verbose)
