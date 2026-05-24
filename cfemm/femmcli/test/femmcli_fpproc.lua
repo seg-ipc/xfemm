@@ -45,6 +45,7 @@ mi_loadsolution()
 -- but triangle tie-breaking can select either adjacent material for H/Mu.
 sample_x = 0.2501
 sample_y = 1e-6
+mu0 = 4e-7*PI
 A,B1,B2,Sig,E,H1,H2,Je,Js,Mu1,Mu2,Pe,Ph = mo_getpointvalues(sample_x, sample_y)
 
 -- check result against FEMM42 output:
@@ -57,11 +58,11 @@ failed = failed + check("Sig", Sig, 0, 2)
 failed = failed + check("E", E, 4.235125240802008e-021, 3)
 failed = failed + check("Je", Je, 0, 2)
 failed = failed + check("Js", Js, 0, 2)
-failed = failed + check_abs("H1", H1, B1/(Mu1*uo), 1e-18)
+failed = failed + check_abs("H1", H1, B1/(Mu1*mu0), 1e-18)
 if Mu2 > 1e100 then
 	failed = failed + check_abs("H2", H2, 0, 1e-18)
 else
-	failed = failed + check_abs("H2", H2, B2/(Mu2*uo), 1e-18)
+	failed = failed + check_abs("H2", H2, B2/(Mu2*mu0), 1e-18)
 end
 failed = failed + check("Pe", Pe, 0, 2)
 failed = failed + check("Ph ", Ph , 0, 2)
