@@ -39,8 +39,8 @@ jobs:
           fi
           cmake "${FLAGS[@]}"
 
-      - name: Build femmcli
-        run: cmake --build build --config Release --target femmcli-bin -j
+      - name: Build
+        run: cmake --build build --config Release -j
 
       - name: Install
         run: cmake --install build --config Release --prefix staging
