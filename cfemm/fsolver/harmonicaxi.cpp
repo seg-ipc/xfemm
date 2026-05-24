@@ -443,6 +443,20 @@ int FSolver::HarmonicAxisymmetric(CBigComplexLinProb &L,bool verbose)
                 }
             }
 
+            // contribution to be from magnetization in the block;
+            t=labellist[El->lbl].MagDir;
+            for(j=0; j<3; j++)
+            {
+                k=j+1;
+                if(k==3) k=0;
+                r=(meshnode[n[j]].x+meshnode[n[k]].x)/2.;
+                K=-0.0001*r*blockproplist[El->blk].H_c*(
+                      cos(t*PI/180.)*(meshnode[n[k]].x-meshnode[n[j]].x) +
+                      sin(t*PI/180.)*(meshnode[n[k]].y-meshnode[n[j]].y) );
+                be[j]+=K;
+                be[k]+=K;
+            }
+
             // do Case 2 circuit stuff for element
             if(labellist[El->lbl].InCircuit>=0)
             {

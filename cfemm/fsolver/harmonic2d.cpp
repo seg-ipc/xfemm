@@ -535,6 +535,19 @@ int FSolver::Harmonic2D(CBigComplexLinProb &L,bool verbose)
                 }
             }
 
+            // contribution to be from magnetization in the block;
+            t=labellist[El->lbl].MagDir;
+            for(j=0; j<3; j++)
+            {
+                k=j+1;
+                if(k==3) k=0;
+                K=0.0001*blockproplist[El->blk].H_c*(
+                        cos(t*PI/180.)*(meshnode[n[k]].x-meshnode[n[j]].x) +
+                        sin(t*PI/180.)*(meshnode[n[k]].y-meshnode[n[j]].y) )/2.;
+                be[j]+=K;
+                be[k]+=K;
+            }
+
             // do Case 2 circuit stuff for element
             if(labellist[El->lbl].InCircuit>=0)
             {
