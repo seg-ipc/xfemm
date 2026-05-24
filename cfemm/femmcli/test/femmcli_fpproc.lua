@@ -28,7 +28,9 @@ open("femmcli_fpproc.fem")
 mi_analyze()
 mi_loadsolution()
 
-A,B1,B2,Sig,E,H1,H2,Je,Js,Mu1,Mu2,Pe,Ph = mo_getpointvalues(0.250, 0)
+-- Keep the sample point just inside air; x=0.250 can fall on a mesh boundary on some platforms.
+sample_x = 0.2501
+A,B1,B2,Sig,E,H1,H2,Je,Js,Mu1,Mu2,Pe,Ph = mo_getpointvalues(sample_x, 0)
 
 -- check result against FEMM42 output:
 -- FIXME: error margin needs sane values
