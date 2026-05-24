@@ -54,7 +54,6 @@ for deg = 0, 90, 10 do
 	mi_modifyboundprop("AGE",10,deg)
 	mi_modifyboundprop("AGE",11,0)
 	mi_saveas("femmcli_TorqueBenchmarki_" .. deg .. ".fem")
-	mi_createmesh()
 	mi_analyze()
 	mi_loadsolution()
 

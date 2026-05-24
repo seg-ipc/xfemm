@@ -240,7 +240,7 @@ bool CBigLinProb::PCGSolve(int flag)
     int i;
     double res,res_o,res_new;
     double er,del,rho,pAp;
-    const int maxIterations = n > 100 ? 10 * n : 1000;
+    const int maxIterations = n > 1000 ? n : 1000;
     const int maxStagnantIterations = 200;
     const double stagnationTolerance = 1.e-14;
     int iterations = 0;

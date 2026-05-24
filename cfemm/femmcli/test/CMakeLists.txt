@@ -26,6 +26,7 @@ function(test_lua testname)
     endif()
     set_tests_properties(${testname}.lua PROPERTIES
         LABELS "lua;${test_lua_LABELS}"
+        TIMEOUT 120
         )
 endfunction()
 

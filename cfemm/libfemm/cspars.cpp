@@ -826,7 +826,7 @@ int CBigComplexLinProb::PBCGSolve(int flag)
     CComplex res,res_new,del,rho,pAp;
     double er,normb;
     int prg2,prg1=0;
-    const int maxIterations = n > 100 ? 10 * n : 1000;
+    const int maxIterations = n > 1000 ? n : 1000;
     const int maxStagnantIterations = 200;
     const double stagnationTolerance = 1.e-14;
     int iterations = 0;
