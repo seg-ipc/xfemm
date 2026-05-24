@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
     cout << "EPProc Loaded!" << endl;
 
-    int test = testEPProc.OpenDocument(doc);
+    bool test = testEPProc.OpenDocument(doc);
 
     if (test==true)
     {
