@@ -240,6 +240,12 @@ bool CBigLinProb::PCGSolve(int flag)
     int i;
     double res,res_o,res_new;
     double er,del,rho,pAp;
+    const int maxIterations = n > 100 ? 10 * n : 1000;
+    const int maxStagnantIterations = 200;
+    const double stagnationTolerance = 1.e-14;
+    int iterations = 0;
+    int stagnantIterations = 0;
+    double bestEr = HUGE_VAL;
 
     // quick check for most obvious sign of singularity;
     for(i=0; i<n; i++) if(M[i]->x==0)
@@ -269,6 +275,14 @@ bool CBigLinProb::PCGSolve(int flag)
     MultPC(R,Z);
     for(i=0; i<n; i++) P[i]=Z[i];
     res=Dot(Z,R);
+    er=sqrt(res/res_o);
+    if (!std::isfinite(er))
+    {
+        fprintf(stderr,"Conjugate Gradient Solver failed: invalid initial error\n");
+        return false;
+    }
+    if (er<=Precision) return true;
+    bestEr = er;
 
     // do iteration;
     do
@@ -276,6 +290,11 @@ bool CBigLinProb::PCGSolve(int flag)
         // step i)
         MultA(P,U);
         pAp=Dot(P,U);
+        if (!std::isfinite(pAp) || pAp==0)
+        {
+            fprintf(stderr,"Conjugate Gradient Solver failed: invalid pAp after %i iterations\n", iterations);
+            return false;
+        }
         del=res/pAp;
 
         for(i=0; i<n; i++)
@@ -290,6 +309,11 @@ bool CBigLinProb::PCGSolve(int flag)
         // step iv)
         MultPC(R,Z);
         res_new=Dot(Z,R);
+        if (!std::isfinite(res_new) || !std::isfinite(res))
+        {
+            fprintf(stderr,"Conjugate Gradient Solver failed: invalid residual after %i iterations\n", iterations);
+            return false;
+        }
         rho=res_new/res;
         res=res_new;
 
@@ -298,6 +322,21 @@ bool CBigLinProb::PCGSolve(int flag)
 
         // have we converged yet?
         er=sqrt(res/res_o);
+        if (!std::isfinite(er))
+        {
+            fprintf(stderr,"Conjugate Gradient Solver failed: invalid error after %i iterations\n", iterations);
+            return false;
+        }
+        iterations++;
+        if (er < bestEr * (1. - stagnationTolerance))
+        {
+            bestEr = er;
+            stagnantIterations = 0;
+        }
+        else
+        {
+            stagnantIterations++;
+        }
 //        prg2=(int) (20.*log10(er)/(log10(Precision)));
 //        if(prg2>prg1)
 //        {
@@ -310,7 +349,18 @@ bool CBigLinProb::PCGSolve(int flag)
 //        }
 
     }
-    while(er>Precision);
+    while((er>Precision)
+          && (iterations<maxIterations)
+          && (stagnantIterations<maxStagnantIterations));
+
+    if (er>Precision)
+    {
+        if (iterations>=maxIterations)
+            fprintf(stderr,"Conjugate Gradient Solver failed: maximum iterations reached (%i), error=%g, precision=%g\n", iterations, er, Precision);
+        else
+            fprintf(stderr,"Conjugate Gradient Solver failed: stalled after %i iterations, error=%g, precision=%g\n", iterations, er, Precision);
+        return false;
+    }
 
     return true;
 }
