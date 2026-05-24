@@ -19,6 +19,7 @@
    Contact: richard.crozier@yahoo.co.uk
 */
 
+#include <cmath>
 #include <math.h>
 #include <stdio.h>
 #include <cstdlib>
@@ -825,6 +826,12 @@ int CBigComplexLinProb::PBCGSolve(int flag)
     CComplex res,res_new,del,rho,pAp;
     double er,normb;
     int prg2,prg1=0;
+    const int maxIterations = n > 1000 ? n : 1000;
+    const int maxStagnantIterations = 200;
+    const double stagnationTolerance = 1.e-14;
+    int iterations = 0;
+    int stagnantIterations = 0;
+    double bestEr = HUGE_VAL;
 
     // Initialize if required
     if(flag==false)
@@ -836,9 +843,18 @@ int CBigComplexLinProb::PBCGSolve(int flag)
     MultA(V,R);
     for(i=0; i<n; i++) R[i]=b[i]-R[i];
     normb=nrm(b);
+    if (!std::isfinite(normb) || normb==0)
+        return normb==0 ? 1 : 0;
 
     // initialize progress bar;
     er=nrm(R)/normb;
+    if (!std::isfinite(er))
+    {
+        fprintf(stderr,"BiConjugate Gradient Solver failed: invalid initial error\n");
+        return 0;
+    }
+    if (er<=Precision) return 1;
+    bestEr = er;
     prg1=(int) (20.*log10(er)/(log10(Precision)));
 //	TheView->m_prog1.SetPos(5*prg1);
 //	TheView->SetDlgItemText(IDC_FRAME1,"BiConjugate Gradient Solver");
@@ -856,6 +872,11 @@ int CBigComplexLinProb::PBCGSolve(int flag)
         // step i)
         MultA(P,U);
         pAp=Dot(P,U);
+        if (!std::isfinite(Re(pAp)) || !std::isfinite(Im(pAp)) || abs(pAp)==0)
+        {
+            fprintf(stderr,"BiConjugate Gradient Solver failed: invalid pAp after %i iterations\n", iterations);
+            return 0;
+        }
         del=res/pAp;
 
         // step ii)
@@ -867,6 +888,13 @@ int CBigComplexLinProb::PBCGSolve(int flag)
         // step iv)
         MultPC(R,Z);
         res_new=Dot(Z,R);
+        if (!std::isfinite(Re(res_new)) || !std::isfinite(Im(res_new))
+                || !std::isfinite(Re(res)) || !std::isfinite(Im(res))
+                || abs(res)==0)
+        {
+            fprintf(stderr,"BiConjugate Gradient Solver failed: invalid residual after %i iterations\n", iterations);
+            return 0;
+        }
         rho=res_new/res;
         res=res_new;
 
@@ -874,6 +902,21 @@ int CBigComplexLinProb::PBCGSolve(int flag)
         for(i=0; i<n; i++) P[i]=Z[i]+(rho*P[i]);
 
         er=nrm(R)/normb;
+        if (!std::isfinite(er))
+        {
+            fprintf(stderr,"BiConjugate Gradient Solver failed: invalid error after %i iterations\n", iterations);
+            return 0;
+        }
+        iterations++;
+        if (er < bestEr * (1. - stagnationTolerance))
+        {
+            bestEr = er;
+            stagnantIterations = 0;
+        }
+        else
+        {
+            stagnantIterations++;
+        }
 
         // report progress
         prg2=(int) (20.*log10(er)/(log10(Precision)));
@@ -888,7 +931,18 @@ int CBigComplexLinProb::PBCGSolve(int flag)
         }
 
     }
-    while(er>Precision);
+    while((er>Precision)
+          && (iterations<maxIterations)
+          && (stagnantIterations<maxStagnantIterations));
+
+    if (er>Precision)
+    {
+        if (iterations>=maxIterations)
+            fprintf(stderr,"BiConjugate Gradient Solver failed: maximum iterations reached (%i), error=%g, precision=%g\n", iterations, er, Precision);
+        else
+            fprintf(stderr,"BiConjugate Gradient Solver failed: stalled after %i iterations, error=%g, precision=%g\n", iterations, er, Precision);
+        return 0;
+    }
 
     return 1;
 }

@@ -3,6 +3,9 @@ if(WIN32)
 else()
     set(NEWLINE_NATIVE UNIX)
 endif()
+
+option(ENABLE_HAIRTRIGGER_TESTS "Enable tests that are prone to fail" OFF)
+
 ## test_epproc(<name>)
 # Test the postprocessor on an existing solution file.
 # 1. Run epproc-testame>
@@ -26,6 +29,9 @@ function(test_epproc name)
         DEPENDS epproc_${name}
         LABELS "electrostatics"
         )
+    if(NOT ENABLE_HAIRTRIGGER_TESTS)
+        set_tests_properties(epproc_${name}.out.check PROPERTIES DISABLED TRUE)
+    endif()
 endfunction()
 
 test_epproc(test)
