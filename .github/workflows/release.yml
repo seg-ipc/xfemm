@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags: ['v[0-9]*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: ubuntu-24.04,     os: linux,   arch: x86_64  }
+          - {runner: ubuntu-24.04-arm, os: linux,   arch: aarch64 }
+          - {runner: macos-15,         os: darwin,  arch: arm64   }
+          - {runner: macos-15-intel,   os: darwin,  arch: x86_64  }
+          - {runner: windows-2022,     os: windows, arch: x86_64  }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write VERSION
+        shell: bash
+        run: printf '%s' "${GITHUB_REF_NAME#v}" > cfemm/VERSION
+
+      - name: Configure
+        shell: bash
+        run: |
+          FLAGS=(-S cfemm -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=staging)
+          # Statically link libgcc/libstdc++ on Linux so the binary runs on
+          # distros with an older glibc than the build host.
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            FLAGS+=("-DCMAKE_EXE_LINKER_FLAGS=-static-libgcc -static-libstdc++")
+          fi
+          cmake "${FLAGS[@]}"
+
+      - name: Build femmcli
+        run: cmake --build build --config Release --target femmcli-bin -j
+
+      - name: Install
+        run: cmake --install build --config Release --prefix staging
+
+      - name: Package
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          OS="${{ matrix.os }}"
+          ARCH="${{ matrix.arch }}"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            ARCHIVE="xfemm-${VERSION}-${OS}-${ARCH}.zip"
+            (cd staging && cmake -E tar cf "../${ARCHIVE}" --format=zip .)
+          else
+            ARCHIVE="xfemm-${VERSION}-${OS}-${ARCH}.tar.gz"
+            tar -czf "${ARCHIVE}" -C staging .
+          fi
+          echo "ASSET=${ARCHIVE}" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asset-${{ matrix.os }}-${{ matrix.arch }}
+          path: ${{ env.ASSET }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
