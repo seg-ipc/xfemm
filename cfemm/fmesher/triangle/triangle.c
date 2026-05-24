@@ -15262,9 +15262,7 @@ char **argv;
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
   triangleloop.orient = 0;
-#ifndef TRILIBRARY
   elementnumber = b->firstnumber;
-#endif /* not TRILIBRARY */
   while (triangleloop.tri != (triangle *) NULL) {
     * (int *) (triangleloop.tri + 6) = (int) elementnumber;
     triangleloop.tri = triangletraverse(m);
@@ -15274,9 +15272,7 @@ char **argv;
 
   traversalinit(&m->triangles);
   triangleloop.tri = triangletraverse(m);
-#ifndef TRILIBRARY
   elementnumber = b->firstnumber;
-#endif /* not TRILIBRARY */
   while (triangleloop.tri != (triangle *) NULL) {
     triangleloop.orient = 1;
     sym(triangleloop, trisym);
