@@ -626,7 +626,8 @@ CComplex exp( const CComplex& x)
     const double exp_x = exp(x.re);
     double sin_x;
     double cos_x;
-    sincos(x.im, &sin_x, &cos_x);
+    sin_x = sin(x.im);
+    cos_x = cos(x.im);
     y.re=cos_x*exp_x;
     y.im=sin_x*exp_x;
 
