@@ -11868,6 +11868,7 @@ int newmark;
 #endif /* not ANSI_DECLARATORS */
 
 {
+  enum finddirectionresult collinear;
   struct otri crosstri;
   struct osub crosssubseg;
   vertex leftvertex, rightvertex;
