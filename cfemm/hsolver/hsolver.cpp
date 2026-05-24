@@ -462,7 +462,7 @@ int HSolver::AnalyzeProblem(CBigLinProb &L)
 	int n[3],ne[3];				// numbers of nodes for a particular element;
 	double a,K,r,z,kludge;
 	double bta,Tinf,Tlast,*Vo;
-    int IsNonlinear=false;
+    bool IsNonlinear=false;
     femmsolver::CElement *El;
 	CComplex kn;
 	int iter=0;
@@ -906,7 +906,7 @@ bool HSolver::runSolver(bool verbose)
     if (!WriteResults(L))
     {
        WarnMessage("couldn't write results to disk\n");
-       return 6;
+       return false;
     }
     if (verbose)
         PrintMessage("results written to disk\n");

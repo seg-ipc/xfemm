@@ -1069,7 +1069,7 @@ CComplex CMSolverMaterialProp::LaminatedBH(double w, int i)
     double Relax=1;
     CComplex mu,vo,vi,c,H;
     CComplex Md,Mo;
-    int Converged=false;
+    bool Converged=false;
 
     // Base the required element spacing on the skin depth
     // at the surface of the material

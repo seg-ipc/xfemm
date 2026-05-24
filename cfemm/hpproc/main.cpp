@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 
     cout << "HPProc Loaded!" << endl;
 
-    int test = testHPProc.OpenDocument(doc);
+    bool test = testHPProc.OpenDocument(doc);
 
     if (test==true)
     {

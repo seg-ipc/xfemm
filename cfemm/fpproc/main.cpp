@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     //getline (cin, mystr);
 
     //testFPProc.OpenDocument(mystr);
-    int test = testFPProc.OpenDocument(PathName);
+    bool test = testFPProc.OpenDocument(PathName);
 
     if (test==true)
     {
